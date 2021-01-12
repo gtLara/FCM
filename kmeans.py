@@ -44,10 +44,8 @@ class KMeans():
                     centroid += self.U[i,j]*self.X[j]
 
                 centroid /= cluster_size
-                print(centroid)
 
             self.C[i] = centroid
-        print()
 
     def update_cost(self):
         self.cost = 0
