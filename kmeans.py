@@ -16,7 +16,7 @@ class KMeans():
         self.C = np.zeros((self.k, self.n))
 
     def dist(self, a, b):
-        return norm(a - b)
+        return norm(a - b)**2
 
     def update_U(self):
 
