@@ -1,17 +1,31 @@
+from scipy.io import loadmat
+import sys
 from kmeans import KMeans
 import numpy as np
 from numpy.random import normal as r
 from numpy.random import randint as ri
 
-n_groups = 5
-n_samples = 240
-group_size = int(n_samples/n_groups)
+synthetic = False
 
-X = r(loc=0, scale=.33, size=((group_size), 2))
+# Synthetic data creation
+if synthetic:
 
-for g in range(n_groups-1):
-    new_group = r(loc=g+1, scale=.33, size=((group_size), 2))
-    X = np.vstack((X, new_group))
+    n_groups = 5
+    n_samples = 240
+    group_size = int(n_samples/n_groups)
 
-kmeans = KMeans(n_groups, X)
-kmeans.train(5, True)
+    X = r(loc=0, scale=.33, size=((group_size), 2))
+
+    for g in range(n_groups-1):
+        new_group = r(loc=g+1, scale=.33, size=((group_size), 2))
+        X = np.vstack((X, new_group))
+
+    kmeans = KMeans(n_groups, X)
+    kmeans.train(5, True)
+
+else:
+
+    X = np.array(loadmat("../fcm_dataset.mat")["x"])
+
+    kmeans = KMeans(4, X)
+    kmeans.train(int(sys.argv[1]), True)
