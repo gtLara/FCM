@@ -6,14 +6,11 @@ from numpy.linalg import norm
 
 # class definitions
 
-class k_means():
-    def __init__(self, n_clusters, data=None, n_samples=None):
+class KMeans():
+    def __init__(self, n_clusters, data):
         self.k = n_clusters
-        self.data = data
-        if n_samples is not None:
-            self.n_samples = len(data)
-        else:
-            self.n_samples = n_samples
+        self.X = data
+        self.n_samples = len(data)
 
     def dist(self, a, b):
         return norm(a - b)
@@ -24,7 +21,7 @@ class k_means():
         for s, sample in enumerate(self.X):
             min_dist = np.inf
             for c, centroid in enumerate(self.C):
-                current_dist = dist(sample, centroid)
+                current_dist = self.dist(sample, centroid)
                 if current_dist < min_dist:
                     min_dist = current_dist
                     closest_c = c
@@ -40,7 +37,7 @@ class k_means():
         #     return X[ri(len(X), size=k), :]
 
         cluster_size = sum(self.U[0])
-        centroids = np.mean(self.X[np.where(U[0] == 1)], axis=0)
+        centroids = np.mean(self.X[np.where(self.U[0] == 1)], axis=0)
         centroids = centroids/cluster_size
 
         for i, membership in enumerate(self.U[1:]):
@@ -55,32 +52,19 @@ class k_means():
         self.cost = 0
         for i, centroid in enumerate(self.C):
             for j, sample in enumerate(self.X):
-                self.cost += U[i, j] * dist(centroid, sample)
+                self.cost += self.U[i, j] * self.dist(centroid, sample)
 
-# Sample creation
-#TODO: implementar rotina de treino e visualização de dados em classe
+    def show_state(self):
+        plt.scatter(self.X[:, 0], self.X[:, 1], c="black")
+        plt.scatter(self.C[:, 0], self.C[:, 1], c="red")
+        plt.show()
 
-n_groups = 3
-n_samples = 240
-group_size = int(n_samples/n_groups)
+    def train(self, it=4, show=False):
+        self.U = ri(2, size=(self.k, 240))
 
-X = r(loc=0, scale=.33, size=((group_size), 2))
-
-for g in range(n_groups-1):
-    new_group = r(loc=g+1, scale=.33, size=((group_size), 2))
-    X = np.vstack((X, new_group))
-
-# Initialization
-
-U = ri(2, size=(3, 240))
-
-# Iteration
-
-for it in range(10):
-    C = get_C(X, U)
-    U = update_U(C, X)
-    cost = get_cost(U, C, X)
-
-    plt.scatter(X[:, 0], X[:, 1], c="red")
-    plt.scatter(C[:, 0], C[:, 1], c="black")
-    plt.show()
+        for i in range(it):
+            self.update_C()
+            self.update_U()
+            self.update_cost()
+            if show:
+                self.show_state()
