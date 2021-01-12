@@ -1,6 +1,6 @@
 from scipy.io import loadmat
 import sys
-from kmeans import KMeans
+from fcm import FCM
 import numpy as np
 from numpy.random import normal as r
 from numpy.random import randint as ri
@@ -20,12 +20,12 @@ if synthetic:
         new_group = r(loc=g+1, scale=.33, size=((group_size), 2))
         X = np.vstack((X, new_group))
 
-    kmeans = KMeans(n_groups, X)
+    kmeans = FCM(n_groups, X)
     kmeans.train(5, True)
 
 else:
 
     X = np.array(loadmat("../fcm_dataset.mat")["x"])
 
-    kmeans = KMeans(4, X)
+    kmeans = FCM(4, X, 2)
     kmeans.train(int(sys.argv[1]), True)
