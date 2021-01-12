@@ -10,13 +10,17 @@ class KMeans():
     def __init__(self, n_clusters, data):
         self.k = n_clusters
         self.X = data
-        self.n_samples = len(data)
+        self.N = self.X.shape[0]
+        self.n = self.X.shape[1]
+        self.U = np.zeros((self.k, self.N))
+        self.C = np.zeros((self.k, self.n))
 
     def dist(self, a, b):
         return norm(a - b)
 
     def update_U(self):
-        self.U = np.zeros((self.C.shape[0], self.X.shape[0]))
+
+        self.U = np.zeros((self.k, self.N))
 
         for s, sample in enumerate(self.X):
             min_dist = np.inf
@@ -28,25 +32,22 @@ class KMeans():
 
             self.U[closest_c, s] = 1
 
-
     def update_C(self):
 
-        # if start:
-        #     if k is None:
-        #         assert("Undefined number of clusters")
-        #     return X[ri(len(X), size=k), :]
+        for i in range(self.k):
+            centroid = np.zeros((self.n))
+            cluster_size = sum(self.U[i])
+            if cluster_size == 0:
+                centroid = self.C[i]
+            else:
+                for j in range(self.N):
+                    centroid += self.U[i,j]*self.X[j]
 
-        cluster_size = sum(self.U[0])
-        centroids = np.mean(self.X[np.where(self.U[0] == 1)], axis=0)
-        centroids = centroids/cluster_size
+                centroid /= cluster_size
+                print(centroid)
 
-        for i, membership in enumerate(self.U[1:]):
-            cluster_size = sum(membership)
-            centroid = np.mean(self.X[np.where(membership == 1)], axis=0)
-            centroids = np.vstack((centroids, centroid))
-
-        self.C = centroids
-
+            self.C[i] = centroid
+        print()
 
     def update_cost(self):
         self.cost = 0
@@ -60,7 +61,11 @@ class KMeans():
         plt.show()
 
     def train(self, it=4, show=False):
-        self.U = ri(2, size=(self.k, 240))
+
+        for j in range(self.N):
+            membership = np.zeros((self.k))
+            membership[ri((self.k))] = 1
+            self.U[:, j] = membership
 
         for i in range(it):
             self.update_C()
