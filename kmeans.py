@@ -4,22 +4,41 @@ from numpy.random import randint as ri
 from matplotlib import pyplot as plt
 from numpy.linalg import norm
 
-# class definitions
-
 class KMeans():
-    def __init__(self, n_clusters, data):
+    """
+    Definicao de classe para algoritmo kmeans classico
+    """
+    def __init__(self, n_clusters, data, tolerance=.001):
+        """
+        Inicializa classe KMeans
+
+        n_clusters: numero de clusters (k)
+
+        data: dados que serao ajustados (array numpy)
+
+        tolerance: tolerancia para custo, a partir da qual o treinamento
+        se encerra
+
+        """
+
         self.k = n_clusters
         self.X = data
         self.N = self.X.shape[0]
         self.n = self.X.shape[1]
         self.U = np.zeros((self.k, self.N))
         self.C = np.zeros((self.k, self.n))
+        self.tolerance = tolerance
 
     def dist(self, a, b):
+        """
+        Calcula norma euclidiana ao quadrado
+        """
         return norm(a - b)**2
 
     def update_U(self):
-
+        """
+        Atualiza matriz de pertinencia de acordo com equacao 15.3
+        """
         self.U = np.zeros((self.k, self.N))
 
         for s, sample in enumerate(self.X):
@@ -33,6 +52,9 @@ class KMeans():
             self.U[closest_c, s] = 1
 
     def update_C(self):
+        """
+        Atualiza matriz C de acordo com equacao 15.4
+        """
 
         for i in range(self.k):
             centroid = np.zeros((self.n))
@@ -48,26 +70,46 @@ class KMeans():
             self.C[i] = centroid
 
     def update_cost(self):
+        """
+        Atualiza custo de acordo com equacao 15.1
+        """
+
         self.cost = 0
         for i, centroid in enumerate(self.C):
             for j, sample in enumerate(self.X):
                 self.cost += self.U[i, j] * self.dist(centroid, sample)
 
     def show_state(self):
+        """
+        Visualiza estado da clusterizacao
+        """
+
         plt.scatter(self.X[:, 0], self.X[:, 1], c="black")
         plt.scatter(self.C[:, 0], self.C[:, 1], c="red")
         plt.show()
 
     def train(self, it=4, show=False):
+        """
+        Rotina de treino como demonstrada no livro texto
+        """
+
+        # Inicializa matriz de pertinencia aleatoriamente
 
         for j in range(self.N):
             membership = np.zeros((self.k))
             membership[ri((self.k))] = 1
             self.U[:, j] = membership
 
+        # Loop de treino
+
         for i in range(it):
             self.update_C()
             self.update_U()
             self.update_cost()
+
+            if self.cost < self.tolerance:
+                return
             if show:
                 self.show_state()
+
+        return self.cost
