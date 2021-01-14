@@ -28,6 +28,7 @@ class KMeans():
         self.U = np.zeros((self.k, self.N))
         self.C = np.zeros((self.k, self.n))
         self.tolerance = tolerance
+        self.loss_tracker = []
 
     def dist(self, a, b):
         """
@@ -78,6 +79,13 @@ class KMeans():
         for i, centroid in enumerate(self.C):
             for j, sample in enumerate(self.X):
                 self.cost += self.U[i, j] * self.dist(centroid, sample)
+
+        self.loss_tracker.append(self.cost)
+
+    def show_loss(self, it):
+        plt.plot(self.loss_tracker, color="red")
+        plt.title(f"Visualização de Loss para {it} iterações")
+
 
     def show_state(self):
         """
