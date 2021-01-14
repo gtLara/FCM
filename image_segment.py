@@ -38,15 +38,20 @@ def segment_image(pixels, k, it, tolerance = .001, fuzzy=False):
 
     return clustering.C, membership
 
+# Carrega parametros
+
+ppath = sys.argv[1]
+k = int(sys.argv[2])
+it = int(sys.argv[3])
 
 # Carrega pixels
 
-photo = photo_open(sys.argv[1])
+photo = photo_open(ppath)
 pixels = pick_pixels(photo)
 
 # Clusteriza pixels
 
-centers, membership = segment_image(pixels, int(sys.argv[2]), int(sys.argv[3]))
+centers, membership = segment_image(pixels, k, it)
 
 # Recompoe imagem baseada nos centroides calculados
 
@@ -61,4 +66,8 @@ if fuzzy:
 else:
     means = "kmeans"
 
-plt.savefig(f"images/{fuzzy}/{sys.argv[2]}/{imtag}_{sys.argv[3]}")
+premeditated_k = [5, 10, 20]
+if k not in premeditated_k:
+    plt.savefig(f"images/{means}/{imtag}_{k}_{it}")
+
+plt.savefig(f"images/{means}/{k}/{imtag}_{it}")
