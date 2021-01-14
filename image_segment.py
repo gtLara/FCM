@@ -44,10 +44,7 @@ ppath = sys.argv[1]
 k = int(sys.argv[2])
 it = int(sys.argv[3])
 
-if sys.argv[4] == "fuzzy":
-    fuzzy = True
-else:
-    fuzzy = False
+fuzzy = (sys.argv[4] == "fuzzy")
 
 # Carrega pixels
 
