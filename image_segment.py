@@ -44,6 +44,11 @@ ppath = sys.argv[1]
 k = int(sys.argv[2])
 it = int(sys.argv[3])
 
+if sys.argv[4] == "fuzzy":
+    fuzzy = True
+else:
+    fuzzy = False
+
 # Carrega pixels
 
 photo = photo_open(ppath)
@@ -51,11 +56,11 @@ pixels = pick_pixels(photo)
 
 # Clusteriza pixels
 
-centers, membership = segment_image(pixels, k, it)
+centers, membership = segment_image(pixels, k, it, fuzzy=fuzzy)
 
 # Recompoe imagem baseada nos centroides calculados
 
-segmented_photo = coloring(photo, membership, centers, fuzzy=bool(sys.argv[4]))
+segmented_photo = coloring(photo, membership, centers)
 
 # Salva imagem
 plt.imshow(segmented_photo)
