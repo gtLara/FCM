@@ -36,7 +36,7 @@ def segment_image(pixels, k, it, tolerance = .001, fuzzy=False):
     clustering.train(it)
     membership = clustering.U.argmax(axis=0)
 
-    return clustering.C, membership
+    return clustering.C, membership, clustering
 
 # Carrega parametros
 
@@ -53,7 +53,7 @@ pixels = pick_pixels(photo)
 
 # Clusteriza pixels
 
-centers, membership = segment_image(pixels, k, it, fuzzy=fuzzy)
+centers, membership, clusters = segment_image(pixels, k, it, fuzzy=fuzzy)
 
 # Recompoe imagem baseada nos centroides calculados
 
@@ -68,8 +68,10 @@ if fuzzy:
 else:
     means = "kmeans"
 
-premeditated_k = [5, 10, 20]
-if k not in premeditated_k:
-    plt.savefig(f"images/{means}/{imtag}_{k}_{it}")
-
 plt.savefig(f"images/{means}/{k}/{imtag}_{it}")
+plt.close()
+clusters.show_loss(it)
+plt.savefig(f"images/{means}/{k}/{imtag}_{it}_loss")
+plt.close()
+clusters.show_state()
+plt.savefig(f"images/{means}/{k}/{imtag}_{it}_state")
