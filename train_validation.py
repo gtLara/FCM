@@ -29,3 +29,4 @@ else:
 
     kmeans = FCM(4, X, 2)
     kmeans.train(int(sys.argv[1]), True)
+
