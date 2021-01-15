@@ -54,7 +54,7 @@ class KMeans():
 
     def update_C(self):
         """
-        Atualiza matriz C de acordo com equacao 15.4
+        Atualiza matriz C de acordo com equacao 15.8
         """
 
         for i in range(self.k):
